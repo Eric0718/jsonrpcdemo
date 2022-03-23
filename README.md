@@ -1,4 +1,4 @@
-How to run：
+### How to run：
     1、打开一个终端： 
         #./buildso.sh
         #./runServer        
