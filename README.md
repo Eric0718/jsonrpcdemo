@@ -1,6 +1,7 @@
 How to run：
     1、打开一个终端： 
-        #./runServer
+        #./buildso.sh
+        #./runServer        
     2、打开另一个终端执行： 
         //request chainId
         curl -X POST --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' localhost:37389
