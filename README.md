@@ -1,5 +1,6 @@
 ### How to run：
     1、打开一个终端： 
+        #cd bin
         #./buildso.sh
         #./runServer        
     2、打开另一个终端执行： 
