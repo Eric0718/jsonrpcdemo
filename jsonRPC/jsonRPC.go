@@ -1,4 +1,4 @@
-package jsonRPC_Edge
+package jsonRPC
 
 import (
 	"encoding/json"
@@ -20,7 +20,7 @@ import (
 )
 
 //New Server
-func NewServer_demo(chainId, networkId, consensusPoint, archivePoint, clinetVersion string) *Server {
+func NewServer(chainId, networkId, consensusPoint, archivePoint, clinetVersion string) *Server {
 	cid, err := strconv.ParseUint(chainId[2:], 16, 32)
 	if err != nil {
 		panic(err)
@@ -29,7 +29,7 @@ func NewServer_demo(chainId, networkId, consensusPoint, archivePoint, clinetVers
 }
 
 //Handle Request
-func (s *Server) HandRequest_demo(w http.ResponseWriter, req *http.Request) {
+func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Add("Access-Control-Allow-Headers", "Content-Type")

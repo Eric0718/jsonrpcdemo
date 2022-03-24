@@ -3,7 +3,7 @@ package main
 import "C"
 
 import (
-	"jsonrpcdemo/jsonRPC_Edge"
+	"jsonrpcdemo/jsonRPC"
 	"log"
 	"net/http"
 	"os"
@@ -32,8 +32,8 @@ func RunServer() {
 	archivePoint := viper.GetString("archivePoint")
 	clinetVersion := viper.GetString("clinetVersion")
 
-	s := jsonRPC_Edge.NewServer_demo(chainId, netWorkId, consensusPoint, archivePoint, clinetVersion)
-	http.HandleFunc("/", s.HandRequest_demo)
+	s := jsonRPC.NewServer(chainId, netWorkId, consensusPoint, archivePoint, clinetVersion)
+	http.HandleFunc("/", s.HandRequest)
 
 	log.Println("running jsonrpc server:", listenPort)
 	err := http.ListenAndServe(listenPort, nil)

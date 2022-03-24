@@ -1,4 +1,4 @@
-package jsonRPC_Edge
+package jsonRPC
 
 import (
 	"encoding/json"
