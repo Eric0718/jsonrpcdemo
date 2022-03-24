@@ -1,5 +1,5 @@
 go build -buildmode=c-shared -o libjsonrpc.so main.go
-mv libjsonrpc.h ./xcgo
-mv libjsonrpc.so ./xcgo/lib
+mv libjsonrpc.h /home/lyle/.local/include
+mv libjsonrpc.so /home/lyle/.local/lib
 
-gcc -o runServer ./xcgo/main.c ./xcgo/lib/libjsonrpc.so -I./xcgo
+gcc -o ./bin/runServer ./xcgo/main.c -ljsonrpc 
