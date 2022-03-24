@@ -2,21 +2,13 @@ package jsonRPC
 
 import (
 	"encoding/json"
-	"errors"
-	"math/big"
 	"strconv"
 
 	"fmt"
 	"io/ioutil"
-	"jsonrpcdemo/xcgo/util"
 	"log"
 
 	"net/http"
-
-	"github.com/ethereum/go-ethereum/common/hexutil"
-	"github.com/ethereum/go-ethereum/core/types"
-	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/rlp"
 )
 
 //New Server
@@ -135,93 +127,4 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 		REST = responseErrFunc(UnkonwnErr, jsonrpc, id, fmt.Errorf("Unsupport method:%v", method).Error())
 	}
 	log.Println("end HandRequest >>>>>>>>>>>>>>>")
-}
-
-//Returns the current chainId.
-func (s *Server) eth_chainId() string {
-	return uint64ToHexString(s.chainId)
-}
-
-//Returns the current network id.
-func (s *Server) net_version() string {
-	return s.networkId
-}
-
-//Returns the current client version.
-func (s *Server) web3_clientVersion() string {
-	return s.clinetVersion
-}
-
-//send signed transaction
-func (s *Server) Eth_sendRawTransaction(rawTx string) (string, error) {
-	log.Println("Into eth_sendRawTransaction===========", rawTx)
-
-	etx, err := DecodeRawTx(rawTx)
-	if err != nil {
-		return "", err
-	}
-	//log.Printf("ethtx params:{to:%v,amount:%v,nounce:%v,hash:%v,gas:%v,gasPrice:%v,txType:%v,chainID:%v,tx lenght:%v}\n", etx.To(), etx.Value(), etx.Nonce(), etx.Hash(), etx.Gas(), etx.GasPrice(), etx.Type(), etx.ChainId(), len(etx.Data()))
-
-	//check chainId
-	if etx.ChainId().Uint64() != s.chainId {
-		return "", fmt.Errorf("Wrong chainId,expect %v,got:%v", s.chainId, etx.ChainId().Int64())
-	}
-
-	//verify eth tx
-	err = VerifyEthSignature(etx)
-	if err != nil {
-		return "", err
-	}
-
-	//convert eth tx to Top tx
-	if !util.ConvertEthTx(rawTx) {
-		return "", errors.New("sendRawTransaction failed!")
-	}
-
-	return etx.Hash().Hex(), nil
-}
-
-//Decode eth Transaction Data
-func DecodeRawTx(rawTx string) (*types.Transaction, error) {
-	body, err := hexutil.Decode(rawTx)
-	if err != nil {
-		return nil, err
-	}
-	var etx types.Transaction
-	err = rlp.DecodeBytes(body, &etx)
-	if err != nil {
-		return nil, err
-	}
-
-	return &etx, nil
-}
-
-//parse eth signature
-func parseEthSignature(ethtx *types.Transaction) []byte {
-	big8 := big.NewInt(8)
-	v, r, s := ethtx.RawSignatureValues()
-	v = new(big.Int).Sub(v, new(big.Int).Mul(ethtx.ChainId(), big.NewInt(2)))
-	v.Sub(v, big8)
-
-	var sign []byte
-	sign = append(sign, r.Bytes()...)
-	sign = append(sign, s.Bytes()...)
-	sign = append(sign, byte(v.Uint64()-27))
-	return sign
-}
-
-//Verify Eth Signature
-func VerifyEthSignature(ethtx *types.Transaction) error {
-	sign := parseEthSignature(ethtx)
-	if len(sign) <= 64 {
-		return fmt.Errorf("eth signature lenght error:%v", len(sign))
-	}
-	pub, err := crypto.Ecrecover(ethtx.Hash().Bytes(), sign)
-	if err != nil {
-		return err
-	}
-	if !crypto.VerifySignature(pub, ethtx.Hash().Bytes(), sign[:64]) {
-		return fmt.Errorf("Verify Eth Signature failed!")
-	}
-	return nil
 }

@@ -1,12 +1,6 @@
 package jsonRPC
 
 import (
-	"encoding/json"
-	"errors"
-	"fmt"
-	"log"
-	"strconv"
-
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 )
@@ -150,69 +144,6 @@ var (
 
 	WEB3_CLIENTVERSION string = "web3_clientVersion"
 )
-
-func getString(mp map[string]interface{}, k string) (string, error) {
-	v, ok := mp[k]
-	if !ok {
-		return "", errors.New(fmt.Sprintf("'%s' not exist", k))
-	}
-	if s, ok := v.(string); ok {
-		return s, nil
-	}
-	return "", errors.New(fmt.Sprintf("'%s' not string", k))
-}
-
-func getValue(mp map[string]interface{}, k string) (interface{}, error) {
-	v, ok := mp[k]
-	if !ok {
-		return 0, errors.New(fmt.Sprintf("'%s' not exist", k))
-	}
-	//log.Printf("value type %T,value:%v\n", v, v)
-	return v, nil
-}
-
-func getRaw(mp map[string]interface{}) ([]interface{}, error) {
-	v, ok := mp["params"]
-	if !ok {
-		return nil, errors.New(fmt.Sprintf("'%s' not exist", "params"))
-	}
-	if len(v.([]interface{})) != 1 {
-		return nil, fmt.Errorf("Wrong raw data:%v", v.([]interface{}))
-	}
-
-	return v.([]interface{}), nil
-}
-
-func responseErrFunc(code int, jsonRpc string, id interface{}, msg string) []byte {
-	Err := &ErrorBody{Code: code, Message: msg}
-	resp, err := json.Marshal(responseErr{JsonRPC: jsonRpc, Id: id, Error: Err})
-	if err != nil {
-		log.Println("eth_sendTransaction Marshal error:", err)
-		return []byte(err.Error())
-	}
-	return resp
-}
-
-func stringToHex(s string) string {
-	return "0x" + s
-}
-
-func uint64ToHexString(val uint64) string {
-	return stringToHex(fmt.Sprintf("%X", val))
-}
-
-func hexToUint64(hxs string) (uint64, error) {
-	if len(hxs) > 2 {
-		if hxs[:2] == "0x" {
-			hxs = hxs[2:]
-		}
-	}
-	n, err := strconv.ParseUint(hxs, 16, 64)
-	if err != nil {
-		return 0, err
-	}
-	return n, nil
-}
 
 var (
 	JsonMarshalErr   int = -4001
