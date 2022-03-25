@@ -6,7 +6,6 @@ import (
 	"jsonrpcdemo/jsonrpc/jsonrpcserver"
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/spf13/viper"
 )
@@ -20,8 +19,7 @@ func RunJsonRpc() {
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath("./config")
 	if err := viper.ReadInConfig(); err != nil {
-		log.Println("ReadInConfig fail:", err.Error())
-		os.Exit(1)
+		log.Fatal("ReadInConfig fail:", err.Error())
 	}
 
 	chainId := viper.GetString("chainId")
