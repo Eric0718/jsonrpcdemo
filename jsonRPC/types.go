@@ -7,11 +7,10 @@ import (
 
 // Server struct
 type Server struct {
-	chainId        uint64
-	networkId      string
-	consensusPoint string
-	archivePoint   string
-	clinetVersion  string
+	chainId       uint64
+	networkId     string
+	archivePoint  string
+	clinetVersion string
 }
 
 type params struct {

@@ -12,12 +12,12 @@ import (
 )
 
 //New Server
-func NewServer(chainId, networkId, consensusPoint, archivePoint, clinetVersion string) *Server {
+func NewServer(chainId, networkId, archivePoint, clinetVersion string) *Server {
 	cid, err := strconv.ParseUint(chainId[2:], 16, 32)
 	if err != nil {
 		panic(err)
 	}
-	return &Server{chainId: cid, networkId: networkId, consensusPoint: consensusPoint, archivePoint: archivePoint, clinetVersion: clinetVersion}
+	return &Server{chainId: cid, networkId: networkId, archivePoint: archivePoint, clinetVersion: clinetVersion}
 }
 
 //Handle Request
