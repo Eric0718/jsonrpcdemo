@@ -1,12 +1,9 @@
 #include<stdio.h>
 #include<libjsonrpc.h>
-#include<libgrpc.h>
 
 
 int main(){	
 	
-	//RunJsonRpc();
-
-	RunGrpc();
+	RunJsonRpc();
 	return 0;
 }
