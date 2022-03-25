@@ -2,6 +2,7 @@
     1、打开一个终端： 
         #cd bin
         #./buildso.sh
+        #export LD_LIBRARY_PATH=./lib:$LD_LIBRARY_PATH
         #./runServer        
     2、打开另一个终端执行： 
         //request chainId
