@@ -1,8 +1,9 @@
 go build -buildmode=c-shared -o libjsonrpc.so ../jsonrpc/run/main.go
 mv libjsonrpc.* ./lib
 
-export LD_LIBRARY_PATH=./lib:$LD_LIBRARY_PATH
+go build -buildmode=c-shared -o libgrpc.so ../grpc/run/main.go
+mv libgrpc.* ./lib
 
-gcc -o ./runServer ../xwrap/main.c -I./lib -L./lib -ljsonrpc 
-
+#gcc -o ./runJsonRpc ../cgotest/main.c -I./lib -L./lib -ljsonrpc     #C run json rpc
+gcc -o ./runGrpc ../cgotest/main.c -I./lib -L./lib -lgrpc      #C run grpc
 

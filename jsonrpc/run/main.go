@@ -13,8 +13,8 @@ import (
 
 func main() {}
 
-//export RunServer
-func RunServer() {
+//export RunJsonRpc
+func RunJsonRpc() {
 	viper := viper.New()
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")

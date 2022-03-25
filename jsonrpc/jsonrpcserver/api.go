@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"jsonrpcdemo/jsonrpc/util"
-	xutil "jsonrpcdemo/xwrap/util"
+	"jsonrpcdemo/xwrap"
 
 	"log"
 )
@@ -46,7 +46,7 @@ func (s *Server) Eth_sendRawTransaction(rawTx string) (string, error) {
 	}
 
 	//convert eth tx to Top tx
-	if !xutil.WrapEthTx(rawTx) {
+	if !xwrap.WrapEthTx(rawTx) {
 		return "", errors.New("sendRawTransaction failed!")
 	}
 
