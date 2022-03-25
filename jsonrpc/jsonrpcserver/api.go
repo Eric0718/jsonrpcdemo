@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"jsonrpcdemo/jsonrpc/util"
-	"jsonrpcdemo/xwrap"
+	"jsonrpcdemo/jsonrpc/xwrap"
 
 	"log"
 )

@@ -2,8 +2,7 @@
 #include<libjsonrpc.h>
 
 
-int main(){	
-	
+int main(){		
 	RunJsonRpc();
 	return 0;
 }
