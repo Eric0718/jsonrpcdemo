@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/ethereum/go-ethereum v1.10.16
+	github.com/goinggo/mapstructure v0.0.0-20140717182941-194205d9b4a9
 	github.com/spf13/viper v1.10.1
 	google.golang.org/grpc v1.43.0
 	google.golang.org/protobuf v1.28.0

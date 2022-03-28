@@ -14,6 +14,8 @@ func main() {}
 
 //export RunJsonRpc
 func RunJsonRpc() {
+	log.SetFlags(log.Lshortfile | log.LstdFlags)
+
 	viper := viper.New()
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")

@@ -1,12 +1,15 @@
 package jsonrpcserver
 
 import (
+	"jsonrpcdemo/jsonrpc/client"
+
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
 // Server struct
 type Server struct {
+	client        client.Client
 	chainId       uint64
 	networkId     string
 	archivePoint  string
@@ -144,4 +147,9 @@ var (
 	ParameterErr     int = -4003
 	IoutilErr        int = -4004
 	UnkonwnErr       int = -4005
+)
+
+const (
+	HEX0 = "0x0"
+	HEX1 = "0x1"
 )

@@ -34,6 +34,14 @@ func GetValue(mp map[string]interface{}, k string) (interface{}, error) {
 	return v, nil
 }
 
+func GetParam(mp map[string]interface{}) ([]interface{}, error) {
+	v, ok := mp["params"]
+	if !ok {
+		return nil, errors.New(fmt.Sprintf("'%s' not exist", "params"))
+	}
+	return v.([]interface{}), nil
+}
+
 func GetRaw(mp map[string]interface{}) ([]interface{}, error) {
 	v, ok := mp["params"]
 	if !ok {
@@ -48,6 +56,13 @@ func GetRaw(mp map[string]interface{}) ([]interface{}, error) {
 
 func StringToHex(s string) string {
 	return "0x" + s
+}
+
+func Check0x(s string) string {
+	if len(s) > 2 && s[:2] == "0x" {
+		return s[2:]
+	}
+	return s
 }
 
 func Uint64ToHexString(val uint64) string {
@@ -73,7 +88,7 @@ type ErrorBody struct {
 	Data    string `json:"data"`
 }
 
-type responseErr struct {
+type ResponseErr struct {
 	JsonRPC string      `json:"jsonrpc"`
 	Id      interface{} `json:"id"`
 	Error   *ErrorBody  `json:"error"`
@@ -81,7 +96,7 @@ type responseErr struct {
 
 func ResponseErrFunc(code int, jsonRpc string, id interface{}, msg string) []byte {
 	Err := &ErrorBody{Code: code, Message: msg}
-	resp, err := json.Marshal(responseErr{JsonRPC: jsonRpc, Id: id, Error: Err})
+	resp, err := json.Marshal(ResponseErr{JsonRPC: jsonRpc, Id: id, Error: Err})
 	if err != nil {
 		log.Println("eth_sendTransaction Marshal error:", err)
 		return []byte(err.Error())
