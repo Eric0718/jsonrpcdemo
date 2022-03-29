@@ -39,6 +39,9 @@ func GetParam(mp map[string]interface{}) ([]interface{}, error) {
 	if !ok {
 		return nil, errors.New(fmt.Sprintf("'%s' not exist", "params"))
 	}
+	if _, ok := v.([]interface{}); !ok {
+		return nil, errors.New("params are wrong!")
+	}
 	return v.([]interface{}), nil
 }
 

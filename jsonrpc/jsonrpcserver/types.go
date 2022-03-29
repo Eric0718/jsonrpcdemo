@@ -139,6 +139,8 @@ var (
 	PERSONAL_UNLOCKACCOUNT    string = "personal_unlockAccount"
 
 	WEB3_CLIENTVERSION string = "web3_clientVersion"
+
+	WEB3_SHA3 string = "web3_sha3"
 )
 
 var (
@@ -147,6 +149,7 @@ var (
 	ParameterErr     int = -4003
 	IoutilErr        int = -4004
 	UnkonwnErr       int = -4005
+	CALLERR          int = -4006
 )
 
 const (

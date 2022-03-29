@@ -40,4 +40,7 @@ type Client interface {
 
 	//Get Max BlockNumber
 	GetMaxBlockNumber() (uint64, error)
+
+	//Returns Keccak-256 (not the standardized SHA3-256) of the given data.
+	Web3_sha3(data string) (string, error)
 }

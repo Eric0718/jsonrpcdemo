@@ -78,7 +78,7 @@ func TestEth_call(t *testing.T) {
 }
 
 func TestEth_estimateGas(t *testing.T) {
-	data := `{"id":337305,"jsonrpc":"2.0","method":"eth_call","params":[{"data":"0x06fdde03","from":"0x0000000000000000000000000000000000000000","to":"0xd6139ea5fe0f3b54499e771417b0a5f56cd629b7"},"latest"]}`
+	data := `{"id":337305,"jsonrpc":"2.0","method":"eth_estimateGas","params":[{"data":"0x06fdde03","from":"0x0000000000000000000000000000000000000000","to":"0xd6139ea5fe0f3b54499e771417b0a5f56cd629b7"},"latest"]}`
 	reqData := make(map[string]interface{})
 
 	if err := json.Unmarshal([]byte(data), &reqData); err != nil {
@@ -91,4 +91,88 @@ func TestEth_estimateGas(t *testing.T) {
 		t.Fatalf("TestEth_estimateGas err:%v", err)
 	}
 	t.Logf("TestEth_estimateGas oK:%v\n", ret)
+}
+
+func TestEth_getBlockByHash(t *testing.T) {
+	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
+	b, err := server.Eth_getBlockByHash("0xhashhhhhhhhhhhhhhhhhhhhhhhh", false)
+	if err != nil {
+		t.Fatalf("TestEth_getBlockByHash err:%v", err)
+	}
+	t.Logf("TestEth_getBlockByHash oK:%v\n", b)
+}
+
+func TestEth_getBlockByNumber(t *testing.T) {
+	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
+	b, err := server.Eth_getBlockByNumber(10, false)
+	if err != nil {
+		t.Fatalf("TestEth_getBlockByNumber err:%v", err)
+	}
+	t.Logf("TestEth_getBlockByNumber oK:%v\n", b)
+}
+
+func TestEth_getTransactionByHash(t *testing.T) {
+	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
+	tx, err := server.Eth_getTransactionByHash("hashhhhhhhhhhhhhhhhhhhhhhhhhhh")
+	if err != nil {
+		t.Fatalf("TestEth_getTransactionByHash err:%v", err)
+	}
+	t.Logf("TestEth_getTransactionByHash oK:%v\n", tx)
+}
+
+func TestEth_getTransactionReceipt(t *testing.T) {
+	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
+	tx, err := server.Eth_getTransactionReceipt("hashhhhhhhhhhhhhhhhhhhhhhhhhhh")
+	if err != nil {
+		t.Fatalf("TestEth_getTransactionReceipt err:%v", err)
+	}
+	t.Logf("TestEth_getTransactionReceipt oK:%v\n", tx)
+}
+
+func TestEth_getStorageAt(t *testing.T) {
+	data := `{"id":337305,"jsonrpc":"2.0","method":"eth_getStorageAt","params":["contractaddressssssssssssssssss","0x0","latest"]}`
+	reqData := make(map[string]interface{})
+
+	if err := json.Unmarshal([]byte(data), &reqData); err != nil {
+		t.Fatalf("TestEth_getStorageAt json.Unmarshal err:%v", err)
+	}
+
+	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
+	ret, err := server.Eth_getStorageAt(reqData)
+	if err != nil {
+		t.Fatalf("TestEth_getStorageAt err:%v", err)
+	}
+	t.Logf("TestEth_getStorageAt oK:%v\n", ret)
+}
+
+func TestEth_getLogs(t *testing.T) {
+	data := `{"jsonrpc":"2.0","method":"eth_getLogs","params":[{"topics":["0x000000000000000000000000a94f5374fce5edbc8e2a8697c15331677e6ebf0b"]}],"id":74}`
+	reqData := make(map[string]interface{})
+
+	if err := json.Unmarshal([]byte(data), &reqData); err != nil {
+		t.Fatalf("TestEth_getLogs json.Unmarshal err:%v", err)
+	}
+
+	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
+	ret, err := server.Eth_getLogs(reqData)
+	if err != nil {
+		t.Fatalf("TestEth_getLogs err:%v", err)
+	}
+	t.Logf("TestEth_getLogs oK:%v\n", ret)
+}
+
+func TestWeb3_sha3(t *testing.T) {
+	data := `{"jsonrpc":"2.0","method":"web3_sha3","params":["94f5374fce5edbc8e2a8697c15331677e6ebf0b"],"id":74}`
+	reqData := make(map[string]interface{})
+
+	if err := json.Unmarshal([]byte(data), &reqData); err != nil {
+		t.Fatalf("TestEth_getLogs json.Unmarshal err:%v", err)
+	}
+
+	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
+	ret, err := server.Web3_sha3(reqData)
+	if err != nil {
+		t.Fatalf("TestWeb3_sha3 err:%v", err)
+	}
+	t.Logf("TestWeb3_sha3 oK:%v\n", ret)
 }

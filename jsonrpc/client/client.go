@@ -84,3 +84,8 @@ func (c *client) GetLogs(address string, fromB, toB uint64, topics []string, blo
 func (c *client) GetMaxBlockNumber() (uint64, error) {
 	return 100, nil
 }
+
+//Returns Keccak-256 (not the standardized SHA3-256) of the given data.
+func (c *client) Web3_sha3(data string) (string, error) {
+	return "sha3 ok!", nil
+}
