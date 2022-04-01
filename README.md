@@ -5,6 +5,12 @@
         #export LD_LIBRARY_PATH=./lib:$LD_LIBRARY_PATH
         #./runServer        
     2、打开另一个终端执行： 
+        a.批量执行：
+            #cd bin
+            #chmod u+x urltest.sh
+            #./urltest.sh
+            
+        b.单条执行：
         //request chainId
         curl -X POST --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' localhost:37389
         
@@ -58,3 +64,5 @@
 
         //web3_sha3
         curl -X POST --data '{"jsonrpc":"2.0","method":"web3_sha3","params":["0x68656c6c6f20776f726c64"],"id":64}' localhost:37389
+
+        

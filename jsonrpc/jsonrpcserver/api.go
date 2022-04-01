@@ -1,5 +1,7 @@
 package jsonrpcserver
 
+import "C"
+
 import (
 	"errors"
 	"fmt"
