@@ -142,12 +142,21 @@ func VerifyEthSignature(ethtx *types.Transaction) error {
 	if len(sign) <= 64 {
 		return fmt.Errorf("eth signature lenght error:%v", len(sign))
 	}
+	log.Println("eth hash:", ethtx.Hash().Bytes())
+	log.Println("eth sign:", sign)
 	pub, err := crypto.Ecrecover(ethtx.Hash().Bytes(), sign)
 	if err != nil {
 		return err
 	}
+	log.Println("eth pub key:", pub)
 	if !crypto.VerifySignature(pub, ethtx.Hash().Bytes(), sign[:64]) {
 		return fmt.Errorf("Verify Eth Signature failed!")
 	}
 	return nil
+}
+
+func MakeString(src string) string {
+	tmpstr := make([]byte, len(src))
+	copy(tmpstr, src)
+	return string(tmpstr)
 }

@@ -13,6 +13,8 @@ import (
 
 	"net/http"
 
+	"jsonrpcdemo/logger"
+
 	"github.com/ethereum/go-ethereum/common"
 )
 
@@ -40,6 +42,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 	defer func() {
 		if err := recover(); err != nil {
 			log.Println("Error:", err)
+			logger.SugarLogger.Errorf("Error:", err)
 			REST = util.ResponseErrFunc(ParameterErr, "2.0", 0, err.(error).Error())
 		}
 	}()
@@ -178,6 +181,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 
 			} else {
 				log.Println("eth_blockNumber success res>>>", num)
+				logger.SugarLogger.Infof("eth_blockNumber success:%v", num)
 				REST = resp
 			}
 		}
@@ -207,7 +211,8 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 					REST = util.ResponseErrFunc(JsonMarshalErr, jsonrpc, id, err.Error())
 
 				} else {
-					log.Println("eth_getBalance success res>>>", from, util.StringToHex(blc))
+					log.Println("eth_getBalance success res>>>", from, blc)
+					logger.SugarLogger.Infof("eth_getBalance success,addr:%v,nonce:%v", from, blc)
 					REST = resp
 				}
 			}
@@ -224,6 +229,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 			REST = util.ResponseErrFunc(JsonMarshalErr, jsonrpc, id, err.Error())
 
 		} else {
+			logger.SugarLogger.Infof("eth_gasPrice success:%v", price)
 			REST = resp
 		}
 	case EHT_GETCODE:
@@ -271,6 +277,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 
 				} else {
 					log.Println("eth_getTransactionCount success res>>>", "addr:", addr, "nonce", count)
+					logger.SugarLogger.Infof("eth_getTransactionCount success,addr:%v,nonce:%v", addr, count)
 					REST = resp
 				}
 			}

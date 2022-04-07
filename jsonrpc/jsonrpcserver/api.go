@@ -8,6 +8,7 @@ import (
 	"jsonrpcdemo/jsonrpc/client"
 	"jsonrpcdemo/jsonrpc/util"
 	"jsonrpcdemo/jsonrpc/xwrap"
+	"jsonrpcdemo/logger"
 
 	"log"
 
@@ -37,6 +38,7 @@ func (s *Server) Eth_blockNumber() (string, error) {
 	if err != nil {
 		return "", err
 	}
+	logger.SugarLogger.Infof("api Eth_blockNumber:%v", blockH)
 	return util.Uint64ToHexString(blockH), nil
 }
 
@@ -86,7 +88,15 @@ func (s *Server) Eth_sendRawTransaction(rawTx string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	//log.Printf("ethtx params:{to:%v,amount:%v,nounce:%v,hash:%v,gas:%v,gasPrice:%v,txType:%v,chainID:%v,tx lenght:%v}\n", etx.To(), etx.Value(), etx.Nonce(), etx.Hash(), etx.Gas(), etx.GasPrice(), etx.Type(), etx.ChainId(), len(etx.Data()))
+
+	signer := types.NewEIP2930Signer(etx.ChainId())
+	mas, err := etx.AsMessage(signer, nil)
+	if err != nil {
+		log.Println("AsMessage error:", err)
+		return "", err
+	}
+
+	log.Printf("ethtx params:{from:%v,to:%v,amount:%v,nounce:%v,hash:%v,gas:%v,gasPrice:%v,txType:%v,chainID:%v,tx lenght:%v}\n", mas.From(), etx.To(), etx.Value(), etx.Nonce(), etx.Hash(), etx.Gas(), etx.GasPrice(), etx.Type(), etx.ChainId(), len(etx.Data()))
 
 	//check chainId
 	if etx.ChainId().Uint64() != s.chainId {

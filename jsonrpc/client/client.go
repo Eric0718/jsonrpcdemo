@@ -3,6 +3,8 @@ package client
 import (
 	"log"
 
+	"jsonrpcdemo/logger"
+
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
@@ -25,17 +27,17 @@ func (c *client) Eth_call(origin, contract, input, value string) (string, string
 
 //get gas Price
 func (c *client) Eth_gasPrice() (uint64, error) {
-	return 10000, nil
+	return uint64(100000000000), nil
 }
 
 //get gas limit
 func (c *client) Get_gasLimit() (uint64, error) {
-	return 10000, nil
+	return uint64(21000), nil
 }
 
 //Get from Balance
 func (c *client) GetBalance(from string) (uint64, error) {
-	return 1000, nil
+	return uint64(10000000000000000000), nil
 }
 
 //get block by hash
@@ -82,6 +84,7 @@ func (c *client) GetLogs(address string, fromB, toB uint64, topics []string, blo
 
 //Get Max BlockNumber
 func (c *client) GetMaxBlockNumber() (uint64, error) {
+	logger.SugarLogger.Infof("client GetMaxBlockNumber")
 	return 100, nil
 }
 

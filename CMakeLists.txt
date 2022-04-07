@@ -17,17 +17,11 @@ set(GO_TARGET jsonrpc_go)
 set(GO_SRCS jsonrpc/cmd/main.go)
 set(GO_LIB libjsonrpc.a)
 
-set(GO_PATH ./)
+
 
 add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${GO_LIB}
   DEPENDS ${GO_SRCS}
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-
-  #COMMAND go env -w GO111MODULE="on"
-  #COMMAND cd ${GO_PATH} 
-  #COMMAND go mod init
-  #COMMAND go mod tidy
-
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} 
   COMMAND env GOPATH=${GOPATH} go build -buildmode=c-archive
   -o "${CMAKE_CURRENT_BINARY_DIR}/${GO_LIB}"
   ${CMAKE_GO_FLAGS} ${GO_SRCS}

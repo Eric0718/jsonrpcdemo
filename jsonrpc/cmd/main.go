@@ -1,57 +1,40 @@
 package main
 
-/*
-	#ifdef __cplusplus
-	extern "C" {
-	#endif
-	void* RunJsonRpc();
-	void  StopJsonRpc(void *srv);
-	#ifdef __cplusplus
-	}
-	#endif
-*/
 import "C"
 
 import (
 	"context"
 	"jsonrpcdemo/jsonrpc/jsonrpcserver"
-	"log"
+	"jsonrpcdemo/jsonrpc/util"
+	"jsonrpcdemo/logger"
 	"net/http"
 	"time"
 	"unsafe"
 
 	"github.com/mattn/go-pointer"
-	"github.com/spf13/viper"
 )
 
 //export RunJsonRpc
-func RunJsonRpc() unsafe.Pointer {
-	log.SetFlags(log.Lshortfile | log.LstdFlags)
+func RunJsonRpc(chainId, netWorkId, archivePoint, clinetVersion, jsonrpcPort string) unsafe.Pointer {
+	//通过make的方式，新构建一段内存来存放从C++处传入的字符串，深度拷贝防止C++中修改影响Go
+	chid := util.MakeString(chainId)
+	netid := util.MakeString(netWorkId)
+	archivep := util.MakeString(archivePoint)
+	cltv := util.MakeString(clinetVersion)
+	jsonp := util.MakeString(jsonrpcPort)
 
-	viper := viper.New()
-	viper.SetConfigName("config")
-	viper.SetConfigType("yaml")
-	viper.AddConfigPath("./config")
-	if err := viper.ReadInConfig(); err != nil {
-		log.Fatal("ReadInConfig fail:", err.Error())
-	}
-
-	chainId := viper.GetString("chainId")
-	netWorkId := viper.GetString("netWorkId")
-
-	jsonrpcPort := viper.GetString("jsonrpcPort")
-	archivePoint := viper.GetString("archivePoint")
-	clinetVersion := viper.GetString("clinetVersion")
-
-	srv := &http.Server{Addr: jsonrpcPort}
-	s := jsonrpcserver.NewJsonRpcServer(chainId, netWorkId, archivePoint, clinetVersion)
+	srv := &http.Server{Addr: jsonp}
+	s := jsonrpcserver.NewJsonRpcServer(chid, netid, archivep, cltv)
 	http.HandleFunc("/", s.HandRequest)
 
 	go func() {
-		log.Println("running jsonrpc server:", jsonrpcPort)
+		logger.InitLogger()
+		defer logger.SugarLogger.Sync()
+
+		logger.SugarLogger.Infof("running jsonrpc server:%v", jsonp)
 		err := srv.ListenAndServe()
 		if err != nil {
-			log.Fatalf("%v\n", err)
+			logger.SugarLogger.Warnf("%v", err)
 			return
 		}
 	}()
@@ -59,14 +42,16 @@ func RunJsonRpc() unsafe.Pointer {
 }
 
 //export StopJsonRpc
-func StopJsonRpc(srv unsafe.Pointer) {
+func StopJsonRpc(srv unsafe.Pointer) C.int {
 	s := pointer.Restore(srv).(*http.Server)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	if err := s.Shutdown(ctx); err != nil {
-		log.Fatalf("StopJsonRpc failed:%v\n", err)
+		logger.SugarLogger.Errorf("StopJsonRpc failed:%v", err)
+		return C.int(-1)
 	}
+	return C.int(0)
 }
 
 func main() {}
