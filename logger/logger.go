@@ -35,11 +35,11 @@ func getEncoder() zapcore.Encoder {
 
 func getLogWriter() zapcore.WriteSyncer {
 	lumberJackLogger := &lumberjack.Logger{
-		Filename:   "./log/jsonrpc.log", //日志文件的位置
-		MaxSize:    1,                   //在进行切割之前，日志文件的最大大小（以MB为单位）
-		MaxBackups: 5,                   //保留旧文件的最大个数
-		MaxAge:     10,                  //保留旧文件的最大天数
-		Compress:   true,                //是否压缩/归档旧文件
+		Filename:   "./log/jsonrpc.log",
+		MaxSize:    1,
+		MaxBackups: 5,
+		MaxAge:     10,
+		Compress:   true,
 	}
 	return zapcore.AddSync(lumberJackLogger)
 }

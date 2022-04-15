@@ -82,14 +82,14 @@ func (s *Server) eth_getBalance(from string) (string, error) {
 
 //send signed transaction
 func (s *Server) eth_sendRawTransaction(rawTx string) (string, error) {
-	log.Println("Into eth_sendRawTransaction===========", rawTx)
+	logger.SugarLogger.Infof("Into eth_sendRawTransaction===========%v", rawTx)
 
 	etx, err := util.DecodeRawTx(rawTx)
 	if err != nil {
 		return "", err
 	}
 
-	signer := types.NewEIP155Signer(etx.ChainId())
+	signer := types.NewEIP2930Signer(etx.ChainId())
 	mas, err := etx.AsMessage(signer, nil)
 	if err != nil {
 		log.Println("AsMessage error:", err)

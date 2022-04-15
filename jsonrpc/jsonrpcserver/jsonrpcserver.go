@@ -16,6 +16,7 @@ import (
 	"jsonrpcdemo/logger"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 )
 
 //New Server
@@ -80,6 +81,8 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 		REST = util.ResponseErrFunc(ParameterErr, jsonrpc, 0, err.Error())
 		return
 	}
+
+	logger.SugarLogger.Infof("HandRequest req data:%v", reqData)
 
 	switch method {
 	case ETH_CHAINID:
@@ -485,6 +488,48 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 
+	case "getLatestTopElectBlockHeight":
+		resp, err := json.Marshal(responseBody{JsonRPC: jsonrpc, Id: id, Result: "0x10"})
+		if err != nil {
+			log.Println("getLatestTopElectBlockHeight Marshal error:", err)
+			REST = util.ResponseErrFunc(JsonMarshalErr, jsonrpc, id, err.Error())
+
+		} else {
+			fmt.Println("getLatestTopElectBlockHeight success res>>>")
+			REST = resp
+		}
+
+	case "getTopElectBlockHeadByHeight":
+		var TopElectBlockHead struct {
+			Hash string `json:"hash"`
+		}
+		TopElectBlockHead.Hash = "0xtesthash0000000000000000000000000"
+		// data, _ := json.Marshal(&TopElectBlockHead)
+		// fmt.Printf("marshal data=========:%v\n", data)
+		resp, err := json.Marshal(responseBody{JsonRPC: jsonrpc, Id: id, Result: TopElectBlockHead})
+		if err != nil {
+			log.Println("getTopElectBlockHeadByHeight Marshal error:", err)
+			REST = util.ResponseErrFunc(JsonMarshalErr, jsonrpc, id, err.Error())
+
+		} else {
+			fmt.Println("getTopElectBlockHeadByHeight success res>>>")
+			REST = resp
+		}
+
+	case "getLatestEthBlockHead":
+		head := &types.Block{}
+		head.ReceivedFrom = "0xtestfrom0000000000000000000000000"
+		// data, _ := json.Marshal(head)
+
+		resp, err := json.Marshal(responseBody{JsonRPC: jsonrpc, Id: id, Result: head})
+		if err != nil {
+			log.Println("getLatestEthBlockHead Marshal error:", err)
+			REST = util.ResponseErrFunc(JsonMarshalErr, jsonrpc, id, err.Error())
+
+		} else {
+			fmt.Println("getLatestEthBlockHead success res>>>")
+			REST = resp
+		}
 	default:
 		log.Printf("Error unsupport method:%v\n", method)
 		REST = util.ResponseErrFunc(UnkonwnErr, jsonrpc, id, fmt.Errorf("Unsupport method:%v", method).Error())
