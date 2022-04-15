@@ -1,6 +1,7 @@
 package util
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -142,14 +143,18 @@ func VerifyEthSignature(ethtx *types.Transaction) error {
 	if len(sign) <= 64 {
 		return fmt.Errorf("eth signature lenght error:%v", len(sign))
 	}
-	log.Println("eth hash:", ethtx.Hash().Bytes())
-	log.Println("eth sign:", sign)
-	pub, err := crypto.Ecrecover(ethtx.Hash().Bytes(), sign)
+
+	signer := types.NewEIP2930Signer(ethtx.ChainId()) //NewEIP155Signer(ethtx.ChainId())
+	sighash := signer.Hash(ethtx)
+	log.Println("tx hash:", ethtx.Hash())
+	log.Println("hex sign:", hex.EncodeToString(sign))
+	pub, err := crypto.Ecrecover(sighash[:], sign) //ethtx.Hash().Bytes(), sign)
 	if err != nil {
 		return err
 	}
+	log.Println("hex pub:", hex.EncodeToString(pub))
 	log.Println("eth pub key:", pub)
-	if !crypto.VerifySignature(pub, ethtx.Hash().Bytes(), sign[:64]) {
+	if !crypto.VerifySignature(pub, sighash[:], sign[:64]) { //ethtx.Hash().Bytes(), sign[:64]) {
 		return fmt.Errorf("Verify Eth Signature failed!")
 	}
 	return nil

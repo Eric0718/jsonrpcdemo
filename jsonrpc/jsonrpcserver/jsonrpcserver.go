@@ -115,7 +115,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 			log.Println("getRaw error:", err)
 			REST = util.ResponseErrFunc(ParameterErr, jsonrpc, id, err.Error())
 		} else {
-			hash, err := s.Eth_sendRawTransaction(para[0].(string))
+			hash, err := s.eth_sendRawTransaction(para[0].(string))
 			if err != nil {
 				log.Println("eth_sendRawTransaction error:", err)
 				REST = util.ResponseErrFunc(UnkonwnErr, jsonrpc, id, err.Error())
@@ -131,7 +131,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 	case ETH_CALL:
-		ret, err := s.Eth_call(reqData)
+		ret, err := s.eth_call(reqData)
 		if err != nil {
 			log.Println("eth_call error:", err)
 			var RetErr util.ErrorBody
@@ -168,7 +168,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 	case ETH_BLOCKNUMBER:
-		num, err := s.Eth_blockNumber()
+		num, err := s.eth_blockNumber()
 		if err != nil {
 			REST = util.ResponseErrFunc(UnkonwnErr, jsonrpc, id, err.Error())
 
@@ -193,7 +193,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 
 		} else {
 			from := para[0].(string)
-			blc, err := s.Eth_getBalance(from)
+			blc, err := s.eth_getBalance(from)
 			if err != nil {
 				log.Println("eth_getBalance error:", err)
 				REST = util.ResponseErrFunc(UnkonwnErr, jsonrpc, id, err.Error())
@@ -218,7 +218,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 	case ETH_GASPRICE:
-		price, err := s.Eth_gasPrice()
+		price, err := s.eth_gasPrice()
 		if err != nil {
 			REST = util.ResponseErrFunc(JsonMarshalErr, jsonrpc, id, err.Error())
 
@@ -239,7 +239,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 			REST = util.ResponseErrFunc(ParameterErr, jsonrpc, id, err.Error())
 
 		} else {
-			code, err := s.Eth_getCode(para[0].(string))
+			code, err := s.eth_getCode(para[0].(string))
 			if err != nil {
 				log.Println("eth_getCode error:", err)
 				code = "0x"
@@ -263,7 +263,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 
 		} else {
 			addr := para[0].(string)
-			count, err := s.Eth_getTransactionCount(addr)
+			count, err := s.eth_getTransactionCount(addr)
 			if err != nil {
 				log.Println("eth_getTransactionCount error:", err)
 				REST = util.ResponseErrFunc(UnkonwnErr, jsonrpc, id, err.Error())
@@ -283,7 +283,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 	case ETH_ESTIMATEGAS:
-		ret, err := s.Eth_estimateGas(reqData)
+		ret, err := s.eth_estimateGas(reqData)
 		if err != nil {
 			var RetErr util.ErrorBody
 			RetErr.Code = -4677
@@ -325,7 +325,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 			log.Println("util.GetParam error:", err)
 			REST = util.ResponseErrFunc(ParameterErr, jsonrpc, id, err.Error())
 		} else {
-			blk, err := s.Eth_getBlockByHash(para[0].(string), para[1].(bool))
+			blk, err := s.eth_getBlockByHash(para[0].(string), para[1].(bool))
 			if err != nil {
 				log.Println("eth_getBlockByHash error:", err)
 				REST = util.ResponseErrFunc(UnkonwnErr, jsonrpc, id, err.Error())
@@ -368,7 +368,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 			if num <= 0 {
 				num = 1
 			}
-			blk, err := s.Eth_getBlockByNumber(num, para[1].(bool))
+			blk, err := s.eth_getBlockByNumber(num, para[1].(bool))
 			if err != nil {
 				log.Println("eth_getBlockByNumber error:", err)
 				resE, err := json.Marshal(responseBlock{JsonRPC: jsonrpc, Id: id, Result: nil})
@@ -403,7 +403,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 			REST = util.ResponseErrFunc(ParameterErr, jsonrpc, id, err.Error())
 		} else {
 			hash := para[0].(string)
-			tx, err := s.Eth_getTransactionByHash(hash)
+			tx, err := s.eth_getTransactionByHash(hash)
 			if err != nil {
 				log.Println("eth_getTransactionByHash error:", err)
 				REST = util.ResponseErrFunc(UnkonwnErr, jsonrpc, id, err.Error())
@@ -424,7 +424,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 			log.Println("util.GetParam error:", err)
 			REST = util.ResponseErrFunc(ParameterErr, jsonrpc, id, err.Error())
 		} else {
-			tc, err := s.Eth_getTransactionReceipt(para[0].(string))
+			tc, err := s.eth_getTransactionReceipt(para[0].(string))
 			if err != nil {
 				REST = util.ResponseErrFunc(UnkonwnErr, jsonrpc, id, err.Error())
 			} else {
@@ -438,7 +438,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 	case ETH_GETLOGS:
-		res, err := s.Eth_getLogs(reqData)
+		res, err := s.eth_getLogs(reqData)
 		if err != nil {
 			log.Println("eth_getLogs error:", err)
 			REST = util.ResponseErrFunc(UnkonwnErr, jsonrpc, id, err.Error())
@@ -453,7 +453,7 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 	case ETH_GETSTORAGEAT:
-		res, err := s.Eth_getStorageAt(reqData)
+		res, err := s.eth_getStorageAt(reqData)
 		if err != nil {
 			log.Println("eth_getStorageAt error:", err)
 			REST = util.ResponseErrFunc(UnkonwnErr, jsonrpc, id, err.Error())
@@ -469,18 +469,18 @@ func (s *Server) HandRequest(w http.ResponseWriter, req *http.Request) {
 			}
 		}
 	case WEB3_SHA3:
-		res, err := s.Web3_sha3(reqData)
+		res, err := s.web3_sha3(reqData)
 		if err != nil {
-			log.Println("Web3_sha3 error:", err)
+			log.Println("web3_sha3 error:", err)
 			REST = util.ResponseErrFunc(UnkonwnErr, jsonrpc, id, err.Error())
 		} else {
 			resp, err := json.Marshal(responseBody{JsonRPC: jsonrpc, Id: id, Result: res})
 			if err != nil {
-				log.Println("Web3_sha3 Marshal error:", err)
+				log.Println("web3_sha3 Marshal error:", err)
 				REST = util.ResponseErrFunc(JsonMarshalErr, jsonrpc, id, err.Error())
 
 			} else {
-				fmt.Println("Web3_sha3 success res>>>", res)
+				fmt.Println("web3_sha3 success res>>>", res)
 				REST = resp
 			}
 		}

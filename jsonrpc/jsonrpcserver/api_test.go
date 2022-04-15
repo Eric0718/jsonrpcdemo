@@ -7,11 +7,11 @@ import (
 
 func TestEth_sendRawTransaction(t *testing.T) {
 	//rawTx := "0xf8920d85174876e80082520894d6139ea5fe0f3b54499e771417b0a5f56cd629b7880de0b6b3a7640000a477fb2c640000000000000000000000000000000000000000000000000de0b6b3a76400008240dea068374558f2dba5934f525aaf840a4e04d0506a33f94c5491f44db976f5f023f2a072caad5814801defb6c5fa3b0e7e6740fa264233673bd78912b11f439aa37aa9"
-	rawTx := "0xf86e0185174876e8008252089482e1c56d8bb42c0d9049439c00c6c51660670b43880de0b6b3a764000080820a93a03871ae8cb94eb8fa5fb18c2cb25e9e7578b4603ff23de3471a28ceced3d9b52ea06254d4faa63e64f276987553a020e38d4d26f506325c02760c7cbe9bb19f5920"
+	rawTx := "0xf86e0385174876e80082520894a6d2b331b03fddb8c6a8830a63fe47e42c4bdf4e881bc16d674ec8000080820a93a0e17d1040b31459b966e9fc9815761e8c940b21ec7910ba6796262cada6dd7ffca0704c3b023dc136ae5980e2218078d0ad3df0778a356036209fd96f9f66016a7c"
 	chainId := "0x538"   //"0x205d"
 	netWorkId := "0x538" //"0x205d"
 	server := NewJsonRpcServer(chainId, netWorkId, "archivePoint", "clinetVersion")
-	hash, err := server.Eth_sendRawTransaction(rawTx)
+	hash, err := server.eth_sendRawTransaction(rawTx)
 	if err != nil {
 		t.Fatalf("TestEth_sendRawTransaction err:%v", err)
 	}
@@ -20,7 +20,7 @@ func TestEth_sendRawTransaction(t *testing.T) {
 
 func TestEth_blockNumber(t *testing.T) {
 	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
-	blockH, err := server.Eth_blockNumber()
+	blockH, err := server.eth_blockNumber()
 	if err != nil {
 		t.Fatalf("TestEth_blockNumber err:%v", err)
 	}
@@ -29,7 +29,7 @@ func TestEth_blockNumber(t *testing.T) {
 
 func TestEth_getCode(t *testing.T) {
 	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
-	code, err := server.Eth_getCode("0xaaaaaaaaaaaaaaaaaaaaaaaaa")
+	code, err := server.eth_getCode("0xaaaaaaaaaaaaaaaaaaaaaaaaa")
 	if err != nil {
 		t.Fatalf("TestEth_getCode err:%v", err)
 	}
@@ -38,7 +38,7 @@ func TestEth_getCode(t *testing.T) {
 
 func TestEth_getTransactionCount(t *testing.T) {
 	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
-	nonce, err := server.Eth_getTransactionCount("0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
+	nonce, err := server.eth_getTransactionCount("0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")
 	if err != nil {
 		t.Fatalf("TestEth_getTransactionCount err:%v", err)
 	}
@@ -46,7 +46,7 @@ func TestEth_getTransactionCount(t *testing.T) {
 }
 func TestEth_gasPrice(t *testing.T) {
 	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
-	price, err := server.Eth_gasPrice()
+	price, err := server.eth_gasPrice()
 	if err != nil {
 		t.Fatalf("TestEth_gasPrice err:%v", err)
 	}
@@ -55,7 +55,7 @@ func TestEth_gasPrice(t *testing.T) {
 
 func TestEth_getBalance(t *testing.T) {
 	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
-	balance, err := server.Eth_getBalance("0xccccccccccccccccccccccccccccc")
+	balance, err := server.eth_getBalance("0xccccccccccccccccccccccccccccc")
 	if err != nil {
 		t.Fatalf("TestEth_getBalance err:%v", err)
 	}
@@ -71,7 +71,7 @@ func TestEth_call(t *testing.T) {
 	}
 
 	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
-	ret, err := server.Eth_call(reqData)
+	ret, err := server.eth_call(reqData)
 	if err != nil {
 		t.Fatalf("TestEth_call err:%v", err)
 	}
@@ -87,7 +87,7 @@ func TestEth_estimateGas(t *testing.T) {
 	}
 
 	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
-	ret, err := server.Eth_estimateGas(reqData)
+	ret, err := server.eth_estimateGas(reqData)
 	if err != nil {
 		t.Fatalf("TestEth_estimateGas err:%v", err)
 	}
@@ -96,7 +96,7 @@ func TestEth_estimateGas(t *testing.T) {
 
 func TestEth_getBlockByHash(t *testing.T) {
 	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
-	b, err := server.Eth_getBlockByHash("0xhashhhhhhhhhhhhhhhhhhhhhhhh", false)
+	b, err := server.eth_getBlockByHash("0xhashhhhhhhhhhhhhhhhhhhhhhhh", false)
 	if err != nil {
 		t.Fatalf("TestEth_getBlockByHash err:%v", err)
 	}
@@ -105,7 +105,7 @@ func TestEth_getBlockByHash(t *testing.T) {
 
 func TestEth_getBlockByNumber(t *testing.T) {
 	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
-	b, err := server.Eth_getBlockByNumber(10, false)
+	b, err := server.eth_getBlockByNumber(10, false)
 	if err != nil {
 		t.Fatalf("TestEth_getBlockByNumber err:%v", err)
 	}
@@ -114,7 +114,7 @@ func TestEth_getBlockByNumber(t *testing.T) {
 
 func TestEth_getTransactionByHash(t *testing.T) {
 	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
-	tx, err := server.Eth_getTransactionByHash("hashhhhhhhhhhhhhhhhhhhhhhhhhhh")
+	tx, err := server.eth_getTransactionByHash("hashhhhhhhhhhhhhhhhhhhhhhhhhhh")
 	if err != nil {
 		t.Fatalf("TestEth_getTransactionByHash err:%v", err)
 	}
@@ -123,7 +123,7 @@ func TestEth_getTransactionByHash(t *testing.T) {
 
 func TestEth_getTransactionReceipt(t *testing.T) {
 	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
-	tx, err := server.Eth_getTransactionReceipt("hashhhhhhhhhhhhhhhhhhhhhhhhhhh")
+	tx, err := server.eth_getTransactionReceipt("hashhhhhhhhhhhhhhhhhhhhhhhhhhh")
 	if err != nil {
 		t.Fatalf("TestEth_getTransactionReceipt err:%v", err)
 	}
@@ -139,7 +139,7 @@ func TestEth_getStorageAt(t *testing.T) {
 	}
 
 	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
-	ret, err := server.Eth_getStorageAt(reqData)
+	ret, err := server.eth_getStorageAt(reqData)
 	if err != nil {
 		t.Fatalf("TestEth_getStorageAt err:%v", err)
 	}
@@ -155,7 +155,7 @@ func TestEth_getLogs(t *testing.T) {
 	}
 
 	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
-	ret, err := server.Eth_getLogs(reqData)
+	ret, err := server.eth_getLogs(reqData)
 	if err != nil {
 		t.Fatalf("TestEth_getLogs err:%v", err)
 	}
@@ -171,7 +171,7 @@ func TestWeb3_sha3(t *testing.T) {
 	}
 
 	server := NewJsonRpcServer("0x205d", "0x205d", "archivePoint", "clinetVersion")
-	ret, err := server.Web3_sha3(reqData)
+	ret, err := server.web3_sha3(reqData)
 	if err != nil {
 		t.Fatalf("TestWeb3_sha3 err:%v", err)
 	}

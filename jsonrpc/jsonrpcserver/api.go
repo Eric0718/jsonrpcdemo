@@ -33,22 +33,22 @@ func (s *Server) web3_clientVersion() string {
 }
 
 //Returns the number of most recent block.
-func (s *Server) Eth_blockNumber() (string, error) {
+func (s *Server) eth_blockNumber() (string, error) {
 	blockH, err := s.client.GetMaxBlockNumber()
 	if err != nil {
 		return "", err
 	}
-	logger.SugarLogger.Infof("api Eth_blockNumber:%v", blockH)
+	logger.SugarLogger.Infof("api eth_blockNumber:%v", blockH)
 	return util.Uint64ToHexString(blockH), nil
 }
 
 //Returns code at a given address.
-func (s *Server) Eth_getCode(addr string) (string, error) {
+func (s *Server) eth_getCode(addr string) (string, error) {
 	return s.client.GetCode(addr)
 }
 
 //Returns the number of transactions sent from an address.
-func (s *Server) Eth_getTransactionCount(addr string) (string, error) {
+func (s *Server) eth_getTransactionCount(addr string) (string, error) {
 	nonce, err := s.client.GetNonce(addr)
 	if err != nil {
 		return "", err
@@ -57,7 +57,7 @@ func (s *Server) Eth_getTransactionCount(addr string) (string, error) {
 }
 
 //Returns the current price per gas in wei.
-func (s *Server) Eth_gasPrice() (string, error) {
+func (s *Server) eth_gasPrice() (string, error) {
 	price, err := s.client.Eth_gasPrice()
 	if err != nil {
 		return "", err
@@ -66,13 +66,13 @@ func (s *Server) Eth_gasPrice() (string, error) {
 }
 
 //Returns a list of addresses owned by client.
-func (s *Server) Eth_accounts() []common.Address {
+func (s *Server) eth_accounts() []common.Address {
 	var accounts []common.Address
 	return accounts
 }
 
 //Returns the balance of the account of given address.
-func (s *Server) Eth_getBalance(from string) (string, error) {
+func (s *Server) eth_getBalance(from string) (string, error) {
 	balance, err := s.client.GetBalance(from)
 	if err != nil {
 		return "", err
@@ -81,7 +81,7 @@ func (s *Server) Eth_getBalance(from string) (string, error) {
 }
 
 //send signed transaction
-func (s *Server) Eth_sendRawTransaction(rawTx string) (string, error) {
+func (s *Server) eth_sendRawTransaction(rawTx string) (string, error) {
 	log.Println("Into eth_sendRawTransaction===========", rawTx)
 
 	etx, err := util.DecodeRawTx(rawTx)
@@ -89,7 +89,7 @@ func (s *Server) Eth_sendRawTransaction(rawTx string) (string, error) {
 		return "", err
 	}
 
-	signer := types.NewEIP2930Signer(etx.ChainId())
+	signer := types.NewEIP155Signer(etx.ChainId())
 	mas, err := etx.AsMessage(signer, nil)
 	if err != nil {
 		log.Println("AsMessage error:", err)
@@ -118,7 +118,7 @@ func (s *Server) Eth_sendRawTransaction(rawTx string) (string, error) {
 }
 
 //Executes a new message call immediately without creating a transaction on the block chain.
-func (s *Server) Eth_call(mp map[string]interface{}) (string, error) {
+func (s *Server) eth_call(mp map[string]interface{}) (string, error) {
 	Para, err := util.GetParam(mp) //v.([]interface{})
 	if err != nil {
 		return "", err
@@ -143,7 +143,7 @@ func (s *Server) Eth_call(mp map[string]interface{}) (string, error) {
 
 //Generates and returns an estimate of how much gas is necessary to allow the transaction to complete. The transaction will not be added to the blockchain.
 //Note that the estimate may be significantly more than the amount of gas actually used by the transaction, for a variety of reasons including EVM mechanics and node performance.
-func (s *Server) Eth_estimateGas(mp map[string]interface{}) (string, error) {
+func (s *Server) eth_estimateGas(mp map[string]interface{}) (string, error) {
 	Para, err := util.GetParam(mp) //v.([]interface{})
 	if err != nil {
 		return "", err
@@ -155,7 +155,7 @@ func (s *Server) Eth_estimateGas(mp map[string]interface{}) (string, error) {
 			return "", err
 		}
 	} else {
-		return "", errors.New("Eth_estimateGas wrong params!")
+		return "", errors.New("eth_estimateGas wrong params!")
 	}
 
 	log.Printf("eth_estimateGas params: from=%v,to=%v,gas=%v,gasPrice=%v,value=%v,data lenght=%v\n", para.From, para.To, para.Gas, para.GasPrice, para.Value, len(para.Data))
@@ -184,26 +184,26 @@ func (s *Server) Eth_estimateGas(mp map[string]interface{}) (string, error) {
 }
 
 //Top block convert to eth blocks
-func (s *Server) TopBlockToEthBlock(tb *client.TopBlock, op bool) (*Block, error) {
+func (s *Server) topBlockToEthBlock(tb *client.TopBlock, op bool) (*Block, error) {
 	return &Block{}, nil
 }
 
 //Returns information about a block by block hash.
-func (s *Server) Eth_getBlockByHash(hash string, bl bool) (*Block, error) {
+func (s *Server) eth_getBlockByHash(hash string, bl bool) (*Block, error) {
 	tb, err := s.client.GetBlockByHash(hash)
 	if err != nil {
 		return nil, err
 	}
-	return s.TopBlockToEthBlock(tb, false)
+	return s.topBlockToEthBlock(tb, false)
 }
 
 //Returns information about a block by block number.
-func (s *Server) Eth_getBlockByNumber(num uint64, bl bool) (*Block, error) {
+func (s *Server) eth_getBlockByNumber(num uint64, bl bool) (*Block, error) {
 	tb, err := s.client.GetBlockByNumber(num)
 	if err != nil {
 		return nil, err
 	}
-	return s.TopBlockToEthBlock(tb, false)
+	return s.topBlockToEthBlock(tb, false)
 }
 
 //convert top tx to eth tx
@@ -235,7 +235,7 @@ func (s *Server) getTxsHashes(txs []*client.TopTransaction) []common.Hash {
 }
 
 //Returns the information about a transaction requested by transaction hash.
-func (s *Server) Eth_getTransactionByHash(hash string) (*Transaction, error) {
+func (s *Server) eth_getTransactionByHash(hash string) (*Transaction, error) {
 	tx, err := s.client.GetTransactionByHash(util.Check0x(hash))
 	if err != nil {
 		log.Printf("eth_getTransactionReceipt txhash:%v, error:%v\n", hash, err.Error())
@@ -251,7 +251,7 @@ func (s *Server) Eth_getTransactionByHash(hash string) (*Transaction, error) {
 }
 
 //Returns the receipt of a transaction by transaction hash.
-func (s *Server) Eth_getTransactionReceipt(hash string) (*TransactionReceipt, error) {
+func (s *Server) eth_getTransactionReceipt(hash string) (*TransactionReceipt, error) {
 	tx, err := s.client.GetTransactionByHash(util.Check0x(hash))
 	if err != nil {
 		log.Printf("eth_getTransactionReceipt txhash:%v, error:%v\n", hash, err.Error())
@@ -268,7 +268,7 @@ func (s *Server) Eth_getTransactionReceipt(hash string) (*TransactionReceipt, er
 }
 
 //Returns the value from a storage position at a given address.
-func (s *Server) Eth_getStorageAt(mp map[string]interface{}) (string, error) {
+func (s *Server) eth_getStorageAt(mp map[string]interface{}) (string, error) {
 	var addr, hash, tag string
 	paras, err := util.GetParam(mp) //v.([]interface{})
 	if err != nil {
@@ -291,7 +291,7 @@ func (s *Server) Eth_getStorageAt(mp map[string]interface{}) (string, error) {
 }
 
 //Returns an array of all logs matching a given filter object.
-func (s *Server) Eth_getLogs(mp map[string]interface{}) ([]*types.Log, error) {
+func (s *Server) eth_getLogs(mp map[string]interface{}) ([]*types.Log, error) {
 	// v, ok := mp["params"]
 	// if !ok {
 	// 	return nil, errors.New(fmt.Sprintf("'%s' not exist", "params"))
@@ -338,10 +338,10 @@ func (s *Server) Eth_getLogs(mp map[string]interface{}) ([]*types.Log, error) {
 	return s.client.GetLogs(para.Address, fromBlock, toBlock, para.Topics, para.BlockHash)
 }
 
-func (s *Server) Web3_sha3(mp map[string]interface{}) (string, error) {
+func (s *Server) web3_sha3(mp map[string]interface{}) (string, error) {
 	para, err := util.GetRaw(mp)
 	if err != nil {
-		log.Println("Web3_sha3 GetParam error:", err)
+		log.Println("web3_sha3 GetParam error:", err)
 		return "", err
 		//REST = util.ResponseErrFunc(ParameterErr, jsonrpc, id, err.Error())
 	}
