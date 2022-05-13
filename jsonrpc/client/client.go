@@ -22,7 +22,7 @@ func NewClient() *client {
 
 //cal contract
 func (c *client) Eth_call(origin, contract, input, value string) (string, string, error) {
-	return "call success!", "", nil
+	return "call success!", "0x100", nil
 }
 
 //get gas Price

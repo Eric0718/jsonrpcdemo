@@ -57,10 +57,6 @@ func GetRaw(mp map[string]interface{}) ([]interface{}, error) {
 	return v.([]interface{}), nil
 }
 
-func StringToHex(s string) string {
-	return "0x" + s
-}
-
 func Check0x(s string) string {
 	if len(s) > 2 && s[:2] == "0x" {
 		return s[2:]
@@ -69,7 +65,7 @@ func Check0x(s string) string {
 }
 
 func Uint64ToHexString(val uint64) string {
-	return StringToHex(fmt.Sprintf("%X", val))
+	return fmt.Sprintf("0x%X", val)
 }
 
 func HexToUint64(hxs string) (uint64, error) {
@@ -122,42 +118,69 @@ func DecodeRawTx(rawTx string) (*types.Transaction, error) {
 	return &etx, nil
 }
 
+func zeroBytes() []byte {
+	return []byte{
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+	}
+}
+
 //parse eth signature
-func ParseEthSignature(ethtx *types.Transaction) []byte {
+func parseEthSignature(ethtx *types.Transaction) []byte {
 	big8 := big.NewInt(8)
 	v, r, s := ethtx.RawSignatureValues()
 	v = new(big.Int).Sub(v, new(big.Int).Mul(ethtx.ChainId(), big.NewInt(2)))
 	v.Sub(v, big8)
 
+	rBytes := r.Bytes()
+	if n := len(rBytes); n < 32 {
+		rBytes = append(zeroBytes()[:32-n], rBytes...)
+	}
+	sBytes := s.Bytes()
+	if n := len(sBytes); n < 32 {
+		sBytes = append(zeroBytes()[:32-n], sBytes...)
+	}
+	vBytes := byte(v.Uint64() - 27)
+
 	var sign []byte
-	sign = append(sign, r.Bytes()...)
-	sign = append(sign, s.Bytes()...)
-	sign = append(sign, byte(v.Uint64()-27))
+	sign = append(sign, rBytes...)
+	sign = append(sign, sBytes...)
+	sign = append(sign, vBytes)
 	return sign
 }
 
 //Verify Eth Signature
 func VerifyEthSignature(ethtx *types.Transaction) error {
-	sign := ParseEthSignature(ethtx)
+	sign := parseEthSignature(ethtx)
 	if len(sign) <= 64 {
 		return fmt.Errorf("eth signature lenght error:%v", len(sign))
 	}
 
-	signer := types.NewEIP2930Signer(ethtx.ChainId())
+	signer := types.NewEIP155Signer(ethtx.ChainId())
 	sighash := signer.Hash(ethtx)
 	pub, err := crypto.Ecrecover(sighash[:], sign)
 	if err != nil {
 		return err
 	}
 
+	{
+
+		signer := types.NewEIP155Signer(ethtx.ChainId())
+		msg, _ := ethtx.AsMessage(signer, nil)
+
+		p, err := crypto.SigToPub(sighash[:], sign)
+		if err != nil {
+			return err
+		}
+
+		addr := crypto.PubkeyToAddress(*p)
+		if msg.From() != addr {
+			return fmt.Errorf("verify sender failed! want:%v,got:%v", addr, msg.From())
+		}
+	}
+
 	if !crypto.VerifySignature(pub, sighash[:], sign[:64]) {
-		return fmt.Errorf("Verify Eth Signature failed!")
+		return fmt.Errorf("%v", "Verify Eth Signature failed")
 	}
 	return nil
-}
-
-func MakeString(src string) string {
-	tmpstr := make([]byte, len(src))
-	copy(tmpstr, src)
-	return string(tmpstr)
 }

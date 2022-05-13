@@ -3,6 +3,8 @@ package jsonrpcserver
 import (
 	"encoding/json"
 	"testing"
+
+	"github.com/ethereum/go-ethereum/core/types"
 )
 
 func TestEth_sendRawTransaction(t *testing.T) {
@@ -176,4 +178,19 @@ func TestWeb3_sha3(t *testing.T) {
 		t.Fatalf("TestWeb3_sha3 err:%v", err)
 	}
 	t.Logf("TestWeb3_sha3 oK:%v\n", ret)
+}
+
+func TestConvertBlock(t *testing.T) {
+	block := &Block{Header: new(types.Header)}
+
+	data, err := json.Marshal(block)
+	if err != nil {
+		t.Fatal("Marshal failed!", err)
+	}
+	h := &types.Header{}
+	err = json.Unmarshal(data, h)
+	if err != nil {
+		t.Fatal("convert failed!", err)
+	}
+	t.Log("convert ok")
 }

@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"jsonrpcdemo/jsonrpc/client"
 	"jsonrpcdemo/jsonrpc/util"
-	"jsonrpcdemo/jsonrpc/xwrap"
 	"jsonrpcdemo/logger"
 
 	"log"
@@ -82,22 +81,21 @@ func (s *Server) eth_getBalance(from string) (string, error) {
 
 //send signed transaction
 func (s *Server) eth_sendRawTransaction(rawTx string) (string, error) {
-	logger.SugarLogger.Infof("Into eth_sendRawTransaction===========%v", rawTx)
+	//logger.SugarLogger.Infof("Into eth_sendRawTransaction===========%v", rawTx)
 
 	etx, err := util.DecodeRawTx(rawTx)
 	if err != nil {
 		return "", err
 	}
-
-	signer := types.NewEIP2930Signer(etx.ChainId())
-	mas, err := etx.AsMessage(signer, nil)
-	if err != nil {
-		log.Println("AsMessage error:", err)
-		return "", err
-	}
-
-	log.Printf("ethtx params:{from:%v,to:%v,amount:%v,nounce:%v,hash:%v,gas:%v,gasPrice:%v,txType:%v,chainID:%v,tx lenght:%v}\n", mas.From(), etx.To(), etx.Value(), etx.Nonce(), etx.Hash(), etx.Gas(), etx.GasPrice(), etx.Type(), etx.ChainId(), len(etx.Data()))
-
+	/*
+		signer := types.NewEIP155Signer(etx.ChainId())
+		mas, err := etx.AsMessage(signer, nil)
+		if err != nil {
+			log.Println("AsMessage error:", err)
+			return "", err
+		}
+		log.Printf("ethtx params:{from:%v,to:%v,amount:%v,nounce:%v,hash:%v,gas:%v,gasPrice:%v,txType:%v,chainID:%v,tx lenght:%v}\n", mas.From(), etx.To(), etx.Value(), etx.Nonce(), etx.Hash(), etx.Gas(), etx.GasPrice(), etx.Type(), etx.ChainId(), len(etx.Data()))
+	*/
 	//check chainId
 	if etx.ChainId().Uint64() != s.chainId {
 		return "", fmt.Errorf("Wrong chainId,expect %v,got:%v", s.chainId, etx.ChainId().Int64())
@@ -110,9 +108,9 @@ func (s *Server) eth_sendRawTransaction(rawTx string) (string, error) {
 	}
 
 	//convert eth tx to Top tx
-	if !xwrap.WrapEthTx(rawTx) {
+	/* if !xwrap.WrapEthTx(rawTx) {
 		return "", errors.New("sendRawTransaction failed!")
-	}
+	} */
 
 	return etx.Hash().Hex(), nil
 }
@@ -236,35 +234,37 @@ func (s *Server) getTxsHashes(txs []*client.TopTransaction) []common.Hash {
 
 //Returns the information about a transaction requested by transaction hash.
 func (s *Server) eth_getTransactionByHash(hash string) (*Transaction, error) {
-	tx, err := s.client.GetTransactionByHash(util.Check0x(hash))
-	if err != nil {
-		log.Printf("eth_getTransactionReceipt txhash:%v, error:%v\n", hash, err.Error())
-		return nil, nil
-	}
-	b, err := s.client.GetBlockByNumber(tx.BlockHeignt)
-	if err != nil {
-		log.Println("eth_getTransactionReceipt GetBlockByNumber error:", tx.BlockHeignt, err.Error())
-		return nil, nil
-	}
+	// tx, err := s.client.GetTransactionByHash(util.Check0x(hash))
+	// if err != nil {
+	// 	log.Printf("eth_getTransactionReceipt txhash:%v, error:%v\n", hash, err.Error())
+	// 	return nil, nil
+	// }
+	// b, err := s.client.GetBlockByNumber(tx.BlockHeignt)
+	// if err != nil {
+	// 	log.Println("eth_getTransactionReceipt GetBlockByNumber error:", tx.BlockHeignt, err.Error())
+	// 	return nil, nil
+	// }
 
-	return TopTxToTransaction(tx, b), nil
+	//return TopTxToTransaction(tx, b), nil
+	return &Transaction{}, nil
 }
 
 //Returns the receipt of a transaction by transaction hash.
 func (s *Server) eth_getTransactionReceipt(hash string) (*TransactionReceipt, error) {
-	tx, err := s.client.GetTransactionByHash(util.Check0x(hash))
-	if err != nil {
-		log.Printf("eth_getTransactionReceipt txhash:%v, error:%v\n", hash, err.Error())
-		return nil, nil
-	}
+	// tx, err := s.client.GetTransactionByHash(util.Check0x(hash))
+	// if err != nil {
+	// 	log.Printf("eth_getTransactionReceipt txhash:%v, error:%v\n", hash, err.Error())
+	// 	return nil, nil
+	// }
 
-	b, err := s.client.GetBlockByNumber(tx.BlockHeignt)
-	if err != nil {
-		log.Println("eth_getTransactionReceipt GetBlockByNumber error:", tx.BlockHeignt, err.Error())
-		return nil, nil
-	}
+	// b, err := s.client.GetBlockByNumber(tx.BlockHeignt)
+	// if err != nil {
+	// 	log.Println("eth_getTransactionReceipt GetBlockByNumber error:", tx.BlockHeignt, err.Error())
+	// 	return nil, nil
+	// }
 
-	return TopTxToReceipt(tx, b), nil
+	// return TopTxToReceipt(tx, b), nil
+	return &TransactionReceipt{}, nil
 }
 
 //Returns the value from a storage position at a given address.

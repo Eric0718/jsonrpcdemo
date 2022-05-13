@@ -2,8 +2,10 @@ package jsonrpcserver
 
 import (
 	"jsonrpcdemo/jsonrpc/client"
+	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
 )
 
@@ -37,6 +39,19 @@ type ErrorBody struct {
 	Data    string `json:"data"`
 }
 
+/*
+type rpcTransaction struct {
+	tx *types.Transaction
+	txExtraInfo
+}
+type txExtraInfo struct {
+	BlockNumber *string         `json:"blockNumber,omitempty"`
+	BlockHash   *common.Hash    `json:"blockHash,omitempty"`
+	From        *common.Address `json:"from,omitempty"`
+}
+
+*/
+
 type Transaction struct {
 	BlockHash        common.Hash    `json:"blockHash"`
 	BlockNumber      string         `json:"blockNumber"`
@@ -59,6 +74,29 @@ type responseTransaction struct {
 	Id      interface{}  `json:"id"`
 	Result  *Transaction `json:"result"`
 }
+
+/*
+type Receipt struct {
+	// Consensus fields: These fields are defined by the Yellow Paper
+	Type              uint8  `json:"type,omitempty"`
+	PostState         []byte `json:"root"`
+	Status            uint64 `json:"status"`
+	CumulativeGasUsed uint64 `json:"cumulativeGasUsed" gencodec:"required"`
+	Bloom             Bloom  `json:"logsBloom"         gencodec:"required"`
+	Logs              []*Log `json:"logs"              gencodec:"required"`
+
+	// Implementation fields: These fields are added by geth when processing a transaction.
+	// They are stored in the chain database.
+	TxHash          common.Hash    `json:"transactionHash" gencodec:"required"`
+	ContractAddress common.Address `json:"contractAddress"`
+	GasUsed         uint64         `json:"gasUsed" gencodec:"required"`
+
+	// Inclusion information: These fields provide information about the inclusion of the
+	// transaction corresponding to this receipt.
+	BlockHash        common.Hash `json:"blockHash,omitempty"`
+	BlockNumber      *big.Int    `json:"blockNumber,omitempty"`
+	TransactionIndex uint        `json:"transactionIndex"`
+}*/
 
 type TransactionReceipt struct {
 	BlockHash         common.Hash    `json:"blockHash"`
@@ -85,20 +123,42 @@ type responseReceipt struct {
 }
 
 type Block struct {
-	Number       string         `json:"number"`
-	Hash         common.Hash    `json:"hash"`
-	ParentHash   common.Hash    `json:"parentHash"`
-	Nonce        string         `json:"nonce"`
-	LogsBloom    string         `json:"logsBloom"`
-	Miner        common.Address `json:"miner"`
-	Difficulty   string         `json:"difficulty"`
-	GasLimit     string         `json:"gasLimit"`
-	GasUsed      string         `json:"gasUsed"`
-	ExtraData    string         `json:"extraData"`
-	Size         string         `json:"size"`
-	TimeStamp    string         `json:"timestamp"`
-	Transactions interface{}    `json:"transactions"`
-	Uncles       []common.Hash  `json:"uncles"`
+	// Number       *hexutil.Big     `json:"number"`
+	Hash common.Hash `json:"hash"`
+	// ParentHash   common.Hash      `json:"parentHash"`
+	// Nonce        types.BlockNonce `json:"nonce"`
+	// LogsBloom    types.Bloom      `json:"logsBloom"`
+	// Miner        common.Address   `json:"miner"`
+	// Difficulty   *hexutil.Big     `json:"difficulty"`
+	// GasLimit     hexutil.Uint64   `json:"gasLimit"`
+	// GasUsed      hexutil.Uint64   `json:"gasUsed"`
+	// ExtraData    *hexutil.Big     `json:"extraData"`
+	Size hexutil.Uint64 `json:"size"`
+	// TimeStamp    hexutil.Uint64   `json:"timestamp"`
+	Transactions interface{}   `json:"transactions"`
+	Uncles       []common.Hash `json:"uncles"`
+	// UncleHash    common.Hash      `json:"sha3Uncles"`
+	// Root         common.Hash      `json:"stateRoot"`
+	// TxHash       common.Hash      `json:"transactionsRoot"`
+	// ReceiptHash  common.Hash      `json:"receiptsRoot"`
+	BaseFee *big.Int `json:"baseFeePerGas"`
+	*types.Header
+}
+
+type TestBlock struct {
+	ParentHash  common.Hash    `json:"parentHash"       gencodec:"required"`
+	UncleHash   common.Hash    `json:"sha3Uncles"       gencodec:"required"`
+	Coinbase    common.Address `json:"miner"            gencodec:"required"`
+	Root        common.Hash    `json:"stateRoot"        gencodec:"required"`
+	TxHash      common.Hash    `json:"transactionsRoot" gencodec:"required"`
+	ReceiptHash common.Hash    `json:"receiptsRoot"     gencodec:"required"`
+	Bloom       types.Bloom    `json:"logsBloom"        gencodec:"required"`
+	Difficulty  *big.Int       `json:"difficulty"       gencodec:"required"`
+	Number      *big.Int       `json:"number"           gencodec:"required"`
+	GasLimit    uint64         `json:"gasLimit"         gencodec:"required"`
+	GasUsed     uint64         `json:"gasUsed"          gencodec:"required"`
+	Time        uint64         `json:"timestamp"        gencodec:"required"`
+	Extra       []byte         `json:"extraData"        gencodec:"required"`
 }
 
 type responseBlock struct {
